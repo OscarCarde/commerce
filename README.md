@@ -1,3 +1,3 @@
 # cscommerce
 
-https://cs50.harvard.edu/web/2020/projects/0/search/
+https://cs50.harvard.edu/web/2020/projects/2/commerce/
