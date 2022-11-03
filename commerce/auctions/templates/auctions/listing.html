@@ -1,0 +1,8 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+
+{% block body %}
+<h2>{{listing.item}}</h2>
+<img src="/{{listing.image}}" alt="">
+{% endblock %}

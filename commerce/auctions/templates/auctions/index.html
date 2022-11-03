@@ -1,0 +1,22 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+{% block body %}
+    <h2>Active Listings</h2>
+    <ul class="d-flex flex-column justify-content-around">
+      {% for listing in listings %}
+      <li class="card ">
+        <a class = "w-100 h-100 position-absolute"  href="{% url 'listing' listing.id %}"></a>
+        <img class = "index_imgs" src="/{{listing.image}}" alt="">
+        <div class="card-body">
+          <strong class="card-title">{{listing.item}}</strong>
+          <p><em>From {{listing.seller}}</em></p>
+          <p class="card-text">{{listing.description}}</p>
+          <em class="text-secondary"> created on {{listing.created}}</em>
+          <p>price: £{{listing.price}}</p>
+          <p>Current Bid: <em>£ {{listing.max_bid}}</em></p>
+          <p><em>{{listing.item_bids}} bids on this item</em></p>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+{% endblock %}

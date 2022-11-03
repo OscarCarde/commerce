@@ -1,0 +1,6 @@
+
+.vscode
+media
+auctions/__pycache__
+auctions/migrations
+commerce/__pycache__

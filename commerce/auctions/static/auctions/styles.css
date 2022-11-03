@@ -1,0 +1,23 @@
+body {
+    padding: 10px;
+  
+    color: rgb(0, 0, 0);
+}
+h1 {
+
+}
+
+h2 {
+
+}
+
+.index_imgs {
+  height: 100px;
+  width: 100px;
+}
+
+.card {
+  flex-basis: 200px;
+  margin: 10px;
+  background-color: rgba(251, 189, 112, 0.806);
+}
