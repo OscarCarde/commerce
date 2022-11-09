@@ -1,7 +1,7 @@
 body {
     padding: 10px;
-  
-    color: rgb(0, 0, 0);
+
+    background-image: linear-gradient(to bottom, #fcffb9, white);
 }
 h1 {
 
@@ -11,6 +11,30 @@ h2 {
 
 }
 
+/* listing.html */
+.lstng-container {
+  height: 50vh;
+  display: flex;
+  justify-content: space-around;
+}
+
+  .lstng-img-container {
+    width: 30vw;
+    background-color: grey;
+  }
+
+  .lstng-img {
+
+  }
+
+  .lstng-dtls-container {
+    min-width: 30vw;
+    display:flex;
+    flex-direction:column;
+    justify-content: space-around;
+  }
+
+/* index.html */
 .index_imgs {
   height: 100px;
   width: 100px;
@@ -19,5 +43,5 @@ h2 {
 .card {
   flex-basis: 200px;
   margin: 10px;
-  background-color: rgba(251, 189, 112, 0.806);
+  /*background-color: rgba(251, 189, 112, 0.806);*/
 }

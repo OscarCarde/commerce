@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.db.models import Max, Count
 from django import forms
+from math import floor
 
 from .models import *
 
@@ -96,6 +97,13 @@ def sell(request):
         return render(request, "auctions/login.html")
 
 def listing(request, listing_id):
+
+    listings = Listing.objects.annotate(max_bid = Max('bids__bid'), bids_count = Count('bids'))
+    listing = listings.get(id = listing_id)
+    max_bid = listing.max_bid
+    if max_bid != None:
+        max_bid = round(max_bid, 2)
+
     return render(request, "auctions/listing.html", {
-        "listing": Listing.objects.get(id = listing_id)
+        "listing": listing, "max_bid": max_bid
     })

@@ -3,6 +3,28 @@
 
 
 {% block body %}
-<h2>{{listing.item}}</h2>
-<img src="/{{listing.image}}" alt="">
+<div class="lstng-container mt-5">
+  <div class="lstng-img-container ">
+    <img class = "w-100" src="/{{listing.image}}" alt="">
+  </div>
+  <div class="lstng-dtls-container bg-light p-5">
+    <p class= "h2">{{listing.item}}</p>
+    <p class = "bg-white p-4">{{listing.description}}</p>
+    <p>starting price: £{{listing.price}}</p>
+    {% if max_bid == None %}
+      <p class = "text-secondary">No bids yet on this item</p>
+    {% else %}
+      <div>
+        <p>Current bid: £{{max_bid}}</p>
+        <p class = "text-secondary"><em>{{listing.bids_count}} bids currently on this item</em></p>
+      </div>
+
+    {% endif %}
+  </div>
+
+</div>
+
+
+
+
 {% endblock %}
