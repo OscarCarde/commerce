@@ -15,6 +15,9 @@ class NewListing(forms.Form):
     asking_price = forms.DecimalField(max_digits = 11, decimal_places = 2, label='Price')
     image = forms.ImageField()
 
+class NewBid(forms.Form):
+    bid = forms.DecimalField(max_digits = 11, decimal_places = 2)
+
 def index(request):
     listings = Listing.objects.annotate(max_bid = Max('bids__bid'), item_bids = Count('bids'))
     return render(request, "auctions/index.html", {
@@ -96,14 +99,40 @@ def sell(request):
     else:
         return render(request, "auctions/login.html")
 
+def watchlist(request):
+    if request.user.is_authenticated:
+
+        return render(request, "auctions/watchlist.html")
+
+    return HttpResponseRedirect("register")
+
 def listing(request, listing_id):
 
     listings = Listing.objects.annotate(max_bid = Max('bids__bid'), bids_count = Count('bids'))
     listing = listings.get(id = listing_id)
     max_bid = listing.max_bid
-    if max_bid != None:
-        max_bid = round(max_bid, 2)
+
+        #implement bid form
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect("register")
+
+        if "place-bid" in request.POST:
+            a_bid = decimal.Decimal(request.POST["bid"])
+
+            if a_bid > max_bid:
+                new_bid = Bid(bid = a_bid, bider = request.user, item = listing)
+                new_bid.save()
+            elif "watchlist" in request.POST:
+                pass
+
+
+            #!!! DRY !!!
+    listings = Listing.objects.annotate(max_bid = Max('bids__bid'), bids_count = Count('bids'))
+    listing = listings.get(id = listing_id)
+    max_bid = listing.max_bid
+
 
     return render(request, "auctions/listing.html", {
-        "listing": listing, "max_bid": max_bid
+        "listing": listing, "max_bid": max_bid, "form": NewBid()
     })

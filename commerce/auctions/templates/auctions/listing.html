@@ -1,6 +1,6 @@
 {% extends "auctions/layout.html" %}
 {% load static %}
-
+{% load custom %}
 
 {% block body %}
 <div class="lstng-container mt-5">
@@ -10,15 +10,23 @@
   <div class="lstng-dtls-container bg-light p-5">
     <p class= "h2">{{listing.item}}</p>
     <p class = "bg-white p-4">{{listing.description}}</p>
-    <p>starting price: £{{listing.price}}</p>
+    <p>starting price: £{{listing.price|round_decimal}}</p>
     {% if max_bid == None %}
       <p class = "text-secondary">No bids yet on this item</p>
     {% else %}
       <div>
-        <p>Current bid: £{{max_bid}}</p>
+        <p>Current bid: £{{max_bid|round_decimal}}</p>
         <p class = "text-secondary"><em>{{listing.bids_count}} bids currently on this item</em></p>
       </div>
-
+      <form  method="post">
+        {{form}}
+        {% csrf_token %}
+        <input class= "btn btn-primary"type="submit" name="place-bid">
+      </form>
+      <form  class = "align-self-end" method="post">
+        {% csrf_token %}
+        <button class = "btn btn-light ms-auto" type="submit"  name = "watchlist">Add to Watchlist</button>
+      </form>
     {% endif %}
   </div>
 

@@ -1,5 +1,6 @@
 {% extends "auctions/layout.html" %}
 {% load static %}
+{% load custom %}
 {% block body %}
     <h2>Active Listings</h2>
     <ul class="d-flex flex-column justify-content-around">
@@ -12,8 +13,8 @@
           <p><em>From {{listing.seller}}</em></p>
           <p class="card-text">{{listing.description}}</p>
           <em class="text-secondary"> created on {{listing.created}}</em>
-          <p>price: £{{listing.price}}</p>
-          <p>Current Bid: <em>£ {{listing.max_bid}}</em></p>
+          <p>price: £{{listing.price|round_decimal}}</p>
+          <p>Current Bid: <em>£ {{listing.max_bid|round_decimal}}</em></p>
           <p><em>{{listing.item_bids}} bids on this item</em></p>
         </div>
       </li>

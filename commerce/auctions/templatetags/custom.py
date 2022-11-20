@@ -1,9 +1,11 @@
 from django import template
-from django.template.defaultfilters import stringfilter
+import decimal
 
 register = template.Library()
 
 @register.filter
-@stringfilter
-def to_int(string):
-    return int(string)
+def round_decimal(value: object) -> str:
+    if value == None:
+        return ""
+        
+    return str(round(decimal.Decimal(value), 2))

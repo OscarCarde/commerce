@@ -3,6 +3,7 @@ from django.db import models
 import PIL
 
 class User(AbstractUser):
+    watchlist = models.ManyToManyField('Listing', blank = True, related_name = 'watchers')
     pass
 
 

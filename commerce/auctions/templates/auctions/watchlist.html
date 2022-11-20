@@ -1,0 +1,15 @@
+{% extends "auctions/layout.html"%}
+{% load static %}
+
+{% block body %}
+  {% if user.watchlist.item == None %}
+    <p class = "text-warning">No items yet on your watchlist</p>
+  {% else %}
+  <ul>
+    {% for item in user.watchlist.item %}
+      <li> {{user.watchlist.item}}</li>
+    {% endfor %}
+  </ul>
+
+  {% endif %}
+{% endblock %}
