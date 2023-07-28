@@ -10,9 +10,20 @@ from decimal import *
 from .models import *
 from .forms import *
 
-def index(request):
+def index(request, category=None):
+    categories = set(Listing.objects.values_list("category", flat=True))
+
+    if category:
+        listings = Listing.objects.filter(category=category, is_active=True).order_by("-created")
+    else:
+        listings = Listing.objects.filter(is_active = True).order_by("-created")
+
+    if not listings:
+        listings = list()
+
     return render(request, "auctions/index.html", {
-        "listings": Listing.objects.filter(is_active = True)
+        "listings": listings,
+        "categories": list(categories)
     })
 
 def sell(request):

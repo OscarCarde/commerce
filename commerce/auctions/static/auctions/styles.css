@@ -3,13 +3,7 @@ body {
 
     background-image: linear-gradient(to bottom, #dddddd, white);
 }
-h1 {
 
-}
-
-h2 {
-
-}
 
 /* listing.html */
 .lstng-container {
@@ -21,10 +15,6 @@ h2 {
   .lstng-img-container {
     width: 30vw;
     background-color: grey;
-  }
-
-  .lstng-img {
-
   }
 
   .lstng-dtls-container {
@@ -45,3 +35,15 @@ h2 {
   margin: 10px;
   /*background-color: rgba(251, 189, 112, 0.806);*/
 }
+
+#grid-container {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+}
+  #listings {
+    grid-column: 1 / span 1;
+  }
+
+  #categories {
+    grid-column: 2 / span 1;
+  }

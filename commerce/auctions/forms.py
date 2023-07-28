@@ -4,8 +4,8 @@ from .models import *
 class ListingForm(ModelForm):
     class Meta:
         model = Listing
-        fields = ['item', 'description', 'price', 'image']
-        exclude = ['seller']
+        fields = ['item', 'description', 'price', 'image', 'category']
+        exclude = ['seller', 'winner']
         widgets = {
             "item": TextInput(attrs={'class': ''}),
             "description": Textarea(attrs={'class':'my-5'})

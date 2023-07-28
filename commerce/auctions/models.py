@@ -16,6 +16,7 @@ class Listing(models.Model):
     image = models.ImageField(upload_to = 'media/photos', blank=True)
     is_active = models.BooleanField(default=True)
     winner = models.ForeignKey(User, blank=True, null=True, on_delete=models.DO_NOTHING, related_name = "items_won")
+    category = models.CharField(max_length = 30, blank=True)
 
     @property
     def max_bid(self):
@@ -55,6 +56,6 @@ class Comment(models.Model):
     commenter = models.ForeignKey(User, on_delete=models.CASCADE, related_name = "comments")
     listing = models.ForeignKey(Listing, blank = True, null=True, on_delete= models.CASCADE, related_name = "the_comments")
 
-    
+
     def __str__(self):
         return f"{self.commenter} posted on {self.posted}: {self.comment}"
