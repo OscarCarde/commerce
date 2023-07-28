@@ -4,7 +4,6 @@ import PIL
 
 class User(AbstractUser):
     watchlist = models.ManyToManyField('Listing', blank = True, related_name = 'watchers')
-    pass
 
 
 class Listing(models.Model):
@@ -13,7 +12,7 @@ class Listing(models.Model):
     created = models.DateTimeField(auto_now = True)
     price = models.DecimalField(max_digits = 11, decimal_places = 2)
     seller = models.ForeignKey('User', on_delete = models.CASCADE, related_name = "items")
-    image = models.ImageField(upload_to = 'media/photos')
+    image = models.ImageField(upload_to = 'media/photos', blank=True)
 
     def __str__(self):
         return f"{self.item}, listed by {self.seller} on {self.created} for {self.price}"

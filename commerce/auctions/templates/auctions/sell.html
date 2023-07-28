@@ -2,12 +2,12 @@
 
 {% block body %}
     <h2>Create Listing</h2>
-    <form class=""  method="post">
-      {{form.title}} <br>
-      {{form.description}} <br>
-      {{form.asking_price}} <br>
-      {{form.image}}
+    <form  enctype="multipart/form-data" method="post">
       {% csrf_token %}
+      {{form.item}} <br>
+      {{form.description}} <br>
+      {{form.price}} <br>
+      {{form.image}}
       <input type="submit">
     </form>
 {% endblock %}

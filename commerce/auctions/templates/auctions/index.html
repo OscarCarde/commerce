@@ -7,7 +7,9 @@
       {% for listing in listings %}
       <li class="card bg-light">
         <a class = "w-100 h-100 position-absolute"  href="{% url 'listing' listing.id %}"></a>
-        <img class = "index_imgs" src="/{{listing.image}}" alt="">
+        {% if listing.image %}
+          <img class = "index_imgs" src="{{listing.image.url}}" alt="">
+        {% endif %}
         <div class="card-body">
           <strong class="card-title">{{listing.item}}</strong>
           <p><em>From {{listing.seller}}</em></p>

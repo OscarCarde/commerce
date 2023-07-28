@@ -4,24 +4,79 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.db.models import Max, Count
-from django import forms
 from math import floor
 
 from .models import *
-
-class NewListing(forms.Form):
-    title = forms.CharField(max_length = 90, label='Title', widget = forms.TextInput(attrs={'class': ''}))
-    description = forms.CharField(max_length = 500, label='Enter your item\'s description here',widget = forms.Textarea(attrs={'class':'my-5'}))
-    asking_price = forms.DecimalField(max_digits = 11, decimal_places = 2, label='Price')
-    image = forms.ImageField()
-
-class NewBid(forms.Form):
-    bid = forms.DecimalField(max_digits = 11, decimal_places = 2)
+from .forms import *
 
 def index(request):
     listings = Listing.objects.annotate(max_bid = Max('bids__bid'), item_bids = Count('bids'))
     return render(request, "auctions/index.html", {
         "listings": listings
+    })
+
+def sell(request):
+
+    if request.user.is_authenticated:
+        if request.method == "POST":
+
+            item = ListingForm(request.POST, request.FILES)
+
+            if item.is_valid:
+                listing = item.save(commit=False)
+                listing.seller = request.user
+                listing.save()
+            
+
+            return render(request, "auctions/sell.html", {
+            "form": ListingForm()
+            })
+        return render(request, "auctions/sell.html", {
+        "form": ListingForm()
+        })
+
+    else:
+        return render(request, "auctions/login.html")
+
+def watchlist(request):
+    if request.user.is_authenticated:
+
+        return render(request, "auctions/watchlist.html")
+
+    return HttpResponseRedirect("register")
+
+def listing(request, listing_id):
+
+    listings = Listing.objects.annotate(max_bid = Max('bids__bid'), bids_count = Count('bids'))
+    listing = listings.get(id = listing_id)
+    max_bid = listing.max_bid
+
+        #implement bid form
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect("register")
+
+        if "place-bid" in request.POST:
+            a_bid = decimal.Decimal(request.POST["bid"])
+
+            if a_bid > max_bid:
+                new_bid = BidForm(request.POST)
+                bid = new_bid.save(commit=False)          
+                bid.bider = request.user
+                bid.item = Listing.get(id=listing_id)
+
+            elif "watchlist" in request.POST:
+                pass
+
+
+            #!!! DRY !!!
+    listings = Listing.objects.annotate(max_bid = Max('bids__bid'), bids_count = Count('bids'))
+    listing = listings.get(id = listing_id)
+    max_bid = listing.max_bid
+
+
+    return render(request, "auctions/listing.html", {
+        "listing": listing, "max_bid": max_bid, "form": BidForm()
     })
 
 
@@ -76,63 +131,3 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
-def sell(request):
-
-    if request.user.is_authenticated:
-        if request.method == "POST":
-
-            title = request.POST["title"]
-            description = request.POST["description"]
-            price = request.POST["asking_price"]
-            image = request.POST["image"]
-
-            listing = Listing(item = title, description = description, price = price, image = image, seller = request.user)
-            listing.save()
-
-            return render(request, "auctions/sell.html", {
-            "form": NewListing()
-            })
-        return render(request, "auctions/sell.html", {
-        "form": NewListing()
-        })
-
-    else:
-        return render(request, "auctions/login.html")
-
-def watchlist(request):
-    if request.user.is_authenticated:
-
-        return render(request, "auctions/watchlist.html")
-
-    return HttpResponseRedirect("register")
-
-def listing(request, listing_id):
-
-    listings = Listing.objects.annotate(max_bid = Max('bids__bid'), bids_count = Count('bids'))
-    listing = listings.get(id = listing_id)
-    max_bid = listing.max_bid
-
-        #implement bid form
-    if request.method == "POST":
-        if not request.user.is_authenticated:
-            return HttpResponseRedirect("register")
-
-        if "place-bid" in request.POST:
-            a_bid = decimal.Decimal(request.POST["bid"])
-
-            if a_bid > max_bid:
-                new_bid = Bid(bid = a_bid, bider = request.user, item = listing)
-                new_bid.save()
-            elif "watchlist" in request.POST:
-                pass
-
-
-            #!!! DRY !!!
-    listings = Listing.objects.annotate(max_bid = Max('bids__bid'), bids_count = Count('bids'))
-    listing = listings.get(id = listing_id)
-    max_bid = listing.max_bid
-
-
-    return render(request, "auctions/listing.html", {
-        "listing": listing, "max_bid": max_bid, "form": NewBid()
-    })
