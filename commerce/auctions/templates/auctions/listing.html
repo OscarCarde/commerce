@@ -4,34 +4,64 @@
 
 {% block body %}
 <div class="lstng-container mt-5">
+  {% if listing.image %}
   <div class="lstng-img-container ">
-    <img class = "w-100" src="/{{listing.image}}" alt="">
+    <img class = "w-100" src="{{listing.image.url}}" alt="">
   </div>
+  {% endif %}
   <div class="lstng-dtls-container bg-light p-5">
     <p class= "h2">{{listing.item}}</p>
+    {% if user == listing.winner %}
+    <p> Congratulations! you have won this auction! :D
+    {% endif %}
     <p class = "bg-white p-4">{{listing.description}}</p>
     <p>starting price: £{{listing.price|round_decimal}}</p>
-    {% if max_bid == None %}
+    {% if listing.max_bid == 0.0 %}
       <p class = "text-secondary">No bids yet on this item</p>
     {% else %}
       <div>
-        <p>Current bid: £{{max_bid|round_decimal}}</p>
+        <p>Current bid: £{{listing.max_bid|round_decimal}}</p>
         <p class = "text-secondary"><em>{{listing.bids_count}} bids currently on this item</em></p>
-      </div>
+      </div>  
+    {% endif %}
       <form  method="post">
-        {{form}}
         {% csrf_token %}
+        {{form}}
+        {% if invalid_bid %}
+        <p> Your bid is too low :(</p>
+        {% endif %}
         <input class= "btn btn-primary"type="submit" name="place-bid">
       </form>
       <form  class = "align-self-end" method="post">
         {% csrf_token %}
-        <button class = "btn btn-light ms-auto" type="submit"  name = "watchlist">Add to Watchlist</button>
+        <button class = "btn btn-light ms-auto" type="submit"  name = "watchlist">
+          {% if watched %}
+          Remove from Watchlist
+          {% else %}
+          Add to Watchlist
+          {% endif %}
+        </button>
       </form>
-    {% endif %}
+        {% if user == listing.seller %}
+      <form  class = "align-self-end" method="post">
+        {% csrf_token %}
+        <input type="submit" class = "btn btn-danger ms-auto" value="Close Auction" name="close-auction">
+      </form>
+        {% endif %}
   </div>
-
 </div>
-
+<div>
+  <form method="post">
+    {% csrf_token %}
+    {{comment_form}}
+    <input class= "btn btn-primary" type="submit" name="commenting">
+  </form>
+  <ul>
+  {% for comment in listing.comments %}
+    <li>{{comment}}</li>
+  {% endfor %}
+  <ul>
+</div>
 
 
 

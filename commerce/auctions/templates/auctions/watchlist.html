@@ -2,14 +2,14 @@
 {% load static %}
 
 {% block body %}
-  {% if user.watchlist.item == None %}
-    <p class = "text-warning">No items yet on your watchlist</p>
+  {% if watched %}
+    <ul>
+      {% for listing in watched %}
+        <li> <a href={% url 'listing' listing.id%}>{{listing}}</a></li>
+      {% endfor %}
+    </ul>
+    
   {% else %}
-  <ul>
-    {% for item in user.watchlist.item %}
-      <li> {{user.watchlist.item}}</li>
-    {% endfor %}
-  </ul>
-
+  <p class = "text-warning">No items yet on your watchlist</p>
   {% endif %}
 {% endblock %}

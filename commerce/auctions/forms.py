@@ -21,3 +21,11 @@ class BidForm(ModelForm):
         model = Bid
         fields = ['bid']
         exclude = ['bider', 'item']
+        labels = {
+            'bid': 'place your bid'
+        }
+
+class CommentForm(ModelForm):
+    class Meta:
+        model= Comment
+        fields= ['comment']

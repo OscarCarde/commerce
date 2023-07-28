@@ -5,14 +5,14 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.db.models import Max, Count
 from math import floor
+from decimal import *
 
 from .models import *
 from .forms import *
 
 def index(request):
-    listings = Listing.objects.annotate(max_bid = Max('bids__bid'), item_bids = Count('bids'))
     return render(request, "auctions/index.html", {
-        "listings": listings
+        "listings": Listing.objects.filter(is_active = True)
     })
 
 def sell(request):
@@ -41,15 +41,17 @@ def sell(request):
 def watchlist(request):
     if request.user.is_authenticated:
 
-        return render(request, "auctions/watchlist.html")
+        return render(request, "auctions/watchlist.html", {
+            "watched": request.user.watchlist.all()
+        })
 
     return HttpResponseRedirect("register")
 
 def listing(request, listing_id):
 
-    listings = Listing.objects.annotate(max_bid = Max('bids__bid'), bids_count = Count('bids'))
-    listing = listings.get(id = listing_id)
-    max_bid = listing.max_bid
+    listing = Listing.objects.get(id = listing_id)
+    max_bid = listing.max_bid if listing.max_bid > 0 else listing.price
+    invalid_bid = False
 
         #implement bid form
     if request.method == "POST":
@@ -57,26 +59,41 @@ def listing(request, listing_id):
             return HttpResponseRedirect("register")
 
         if "place-bid" in request.POST:
-            a_bid = decimal.Decimal(request.POST["bid"])
-
+            a_bid = Decimal(request.POST["bid"])
+            
             if a_bid > max_bid:
                 new_bid = BidForm(request.POST)
                 bid = new_bid.save(commit=False)          
                 bid.bider = request.user
-                bid.item = Listing.get(id=listing_id)
+                bid.item = Listing.objects.get(id=listing_id)
+                bid.save()
+            else:
+                invalid_bid = True
 
-            elif "watchlist" in request.POST:
-                pass
+        elif "watchlist" in request.POST:
+                is_watching = listing in request.user.watchlist.all()
 
+                if is_watching:
+                    request.user.watchlist.remove(listing)
+                else:
+                    request.user.watchlist.add(listing)
+        elif "close-auction" in request.POST:
+            listing.close_auction()
+            return HttpResponseRedirect(listing_id)
+        
+        elif "commenting" in request.POST:
+            new_comment = CommentForm(request.POST)
+            comment = new_comment.save(commit=False)
+            comment.commenter = request.user
+            comment.listing = listing
+            comment.save()
 
-            #!!! DRY !!!
-    listings = Listing.objects.annotate(max_bid = Max('bids__bid'), bids_count = Count('bids'))
-    listing = listings.get(id = listing_id)
-    max_bid = listing.max_bid
-
+    listing = Listing.objects.get(id = listing_id)
 
     return render(request, "auctions/listing.html", {
-        "listing": listing, "max_bid": max_bid, "form": BidForm()
+        "listing": listing, "form": BidForm(), 
+        "watched": listing in request.user.watchlist.all(), 
+        "invalid_bid": invalid_bid, "comment_form": CommentForm()
     })
 
 
