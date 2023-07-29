@@ -14,7 +14,6 @@ class Listing(models.Model):
     price = models.DecimalField(max_digits = 11, decimal_places = 2)
     seller = models.ForeignKey('User', on_delete = models.CASCADE, related_name = "items")
     image = models.ImageField(upload_to = 'media/photos', blank=True)
-    is_active = models.BooleanField(default=True)
     winner = models.ForeignKey(User, blank=True, null=True, on_delete=models.DO_NOTHING, related_name = "items_won")
     category = models.CharField(max_length = 30, blank=True)
 
@@ -35,7 +34,6 @@ class Listing(models.Model):
         highest_bid = self.bids.order_by('-bid').first()
         if highest_bid:
             self.winner = highest_bid.bider
-        self.is_active = False
         self.save()
 
     @property

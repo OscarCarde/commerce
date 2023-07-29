@@ -1,21 +1,24 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+
 from django.db import IntegrityError
+
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from django.db.models import Max, Count
-from math import floor
+
 from decimal import *
 
+from django.db.models import Max, Count
 from .models import *
 from .forms import *
 
 def index(request, category=None):
 
     if category:
-        listings = Listing.objects.filter(category=category, is_active=True).order_by("-created")
+        listings = Listing.objects.filter(category=category, winner=None).order_by("-created")
     else:
-        listings = Listing.objects.filter(is_active = True).order_by("-created")
+        listings = Listing.objects.filter(winner=None).order_by("-created")
 
     if not listings:
         listings = list()
@@ -31,30 +34,26 @@ def categories(request):
         "categories": list(categories)
     })
 
-
+@login_required
 def sell(request):
-
-    if request.user.is_authenticated:
-        if request.method == "POST":
-
-            item = ListingForm(request.POST, request.FILES)
-
-            if item.is_valid:
-                listing = item.save(commit=False)
-                listing.category = listing.category.title()
-                listing.seller = request.user
-                listing.save()
+    if request.method == "POST":
+        item = ListingForm(request.POST, request.FILES)
+        
+        if item.is_valid:
+            listing = item.save(commit=False)
+            listing.category = listing.category.title()
+            listing.seller = request.user
+            listing.save()
             
 
-            return render(request, "auctions/sell.html", {
-            "form": ListingForm()
-            })
         return render(request, "auctions/sell.html", {
-        "form": ListingForm()
+            "form": ListingForm()
         })
+    
+    return render(request, "auctions/sell.html", {
+        "form": ListingForm()
+    })
 
-    else:
-        return render(request, "auctions/login.html")
 
 def watchlist(request):
     if request.user.is_authenticated:
