@@ -11,7 +11,6 @@ from .models import *
 from .forms import *
 
 def index(request, category=None):
-    categories = set(Listing.objects.values_list("category", flat=True))
 
     if category:
         listings = Listing.objects.filter(category=category, is_active=True).order_by("-created")
@@ -22,9 +21,16 @@ def index(request, category=None):
         listings = list()
 
     return render(request, "auctions/index.html", {
-        "listings": listings,
+        "listings": listings
+    })
+
+def categories(request):
+    categories = set(Listing.objects.values_list("category", flat=True))
+
+    return render(request, "auctions/categories.html", {
         "categories": list(categories)
     })
+
 
 def sell(request):
 
@@ -35,6 +41,7 @@ def sell(request):
 
             if item.is_valid:
                 listing = item.save(commit=False)
+                listing.category = listing.category.title()
                 listing.seller = request.user
                 listing.save()
             
@@ -67,9 +74,9 @@ def listing(request, listing_id):
         #implement bid form
     if request.method == "POST":
         if not request.user.is_authenticated:
-            return HttpResponseRedirect("register")
+            return HttpResponseRedirect("/register")
 
-        if "place-bid" in request.POST:
+        elif "place-bid" in request.POST:
             a_bid = Decimal(request.POST["bid"])
             
             if a_bid > max_bid:
@@ -100,10 +107,14 @@ def listing(request, listing_id):
             comment.save()
 
     listing = Listing.objects.get(id = listing_id)
+    if request.user.is_authenticated:
+        watched = listing in request.user.watchlist.all()
+    else:
+        watched = False
 
     return render(request, "auctions/listing.html", {
         "listing": listing, "form": BidForm(), 
-        "watched": listing in request.user.watchlist.all(), 
+        "watched": watched, 
         "invalid_bid": invalid_bid, "comment_form": CommentForm()
     })
 

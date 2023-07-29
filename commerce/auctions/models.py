@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-import PIL
-from django.utils.functional import cached_property
+from django.utils import timezone
+from django.utils.timesince import timesince
 
 class User(AbstractUser):
     watchlist = models.ManyToManyField('Listing', blank = True, related_name = 'watchers')
@@ -38,8 +38,12 @@ class Listing(models.Model):
         self.is_active = False
         self.save()
 
+    @property
+    def timestamp(self):
+        return timesince(self.created , timezone.now()) + " ago"
+
     def __str__(self):
-        return f"{self.item}, listed by {self.seller} on {self.created} for {self.price}"
+        return f"{self.item}, listed by {self.seller}, {self.timestamp} for {self.price}"
 
 
 class Bid(models.Model):
@@ -56,6 +60,9 @@ class Comment(models.Model):
     commenter = models.ForeignKey(User, on_delete=models.CASCADE, related_name = "comments")
     listing = models.ForeignKey(Listing, blank = True, null=True, on_delete= models.CASCADE, related_name = "the_comments")
 
+    @property
+    def timestamp(self):
+        return timesince(self.posted, timezone.now()) + " ago"
 
     def __str__(self):
         return f"{self.commenter} posted on {self.posted}: {self.comment}"

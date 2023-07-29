@@ -12,22 +12,15 @@
             <img class = "index_imgs" src="{{listing.image.url}}" alt="">
           {% endif %}
           <div class="card-body">
-            <strong class="card-title">{{listing.item}}</strong>
-            <p><em>From {{listing.seller}}</em></p>
+            <h4 class="card-title">{{listing.item}}</h4>
+            <p class = "text-muted"><em>By {{listing.seller}}</em></p>
             <p class="card-text">{{listing.description}}</p>
             <em class="text-secondary"> created on {{listing.created}}</em>
             <p>price: £{{listing.price|round_decimal}}</p>
             <p>Current Bid: <em>£ {{listing.max_bid|round_decimal}}</em></p>
-            <p><em>{{listing.item_bids}} bids on this item</em></p>
+            <p><em>{{listing.bids_count}} bids on this item</em></p>
           </div>
         </li>
-        {% endfor %}
-      </ul>
-      <ul id="categories">
-        <h3>Categories</h3>
-        <li><a href="{% url 'index' %}">All</a></li>
-        {% for a_category in categories %}
-          <li><a href="{% url 'index' a_category %}">{{a_category}}</a></li>
         {% endfor %}
       </ul>
     </div>

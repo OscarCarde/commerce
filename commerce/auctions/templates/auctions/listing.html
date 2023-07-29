@@ -3,64 +3,72 @@
 {% load custom %}
 
 {% block body %}
-<div class="lstng-container mt-5">
-  {% if listing.image %}
-  <div class="lstng-img-container ">
-    <img class = "w-100" src="{{listing.image.url}}" alt="">
-  </div>
-  {% endif %}
-  <div class="lstng-dtls-container bg-light p-5">
-    <p class= "h2">{{listing.item}}</p>
-    {% if user == listing.winner %}
-    <p> Congratulations! you have won this auction! :D
+<div id="listing-container">
+  <div id="lstng-container" class = "mt-5">
+    {% if listing.image %}
+    <div class="lstng-img-container ">
+      <img class = "img-fluid" src="{{listing.image.url}}" alt="">
+    </div>
     {% endif %}
-    <p class = "bg-white p-4">{{listing.description}}</p>
-    <p>starting price: £{{listing.price|round_decimal}}</p>
-    {% if listing.max_bid == 0.0 %}
-      <p class = "text-secondary">No bids yet on this item</p>
-    {% else %}
-      <div>
-        <p>Current bid: £{{listing.max_bid|round_decimal}}</p>
-        <p class = "text-secondary"><em>{{listing.bids_count}} bids currently on this item</em></p>
-      </div>  
-    {% endif %}
-      <form  method="post">
-        {% csrf_token %}
-        {{form}}
-        {% if invalid_bid %}
-        <p> Your bid is too low :(</p>
-        {% endif %}
-        <input class= "btn btn-primary"type="submit" name="place-bid">
-      </form>
-      <form  class = "align-self-end" method="post">
-        {% csrf_token %}
-        <button class = "btn btn-light ms-auto" type="submit"  name = "watchlist">
-          {% if watched %}
-          Remove from Watchlist
-          {% else %}
-          Add to Watchlist
+    <div class="lstng-dtls-container bg-light p-5">
+      <p class= "h2">{{listing.item}}</p>
+      {% if user == listing.winner %}
+      <p> Congratulations! you have won this auction! :D
+      {% endif %}
+      <p class = "bg-white p-4">{{listing.description}}</p>
+      <p>starting price: £{{listing.price|round_decimal}}</p>
+      {% if listing.max_bid == 0.0 %}
+        <p class = "text-secondary">No bids yet on this item</p>
+      {% else %}
+        <div>
+          <p>Current bid: £{{listing.max_bid|round_decimal}}</p>
+          <p class = "text-secondary"><em>{{listing.bids_count}} bids currently on this item</em></p>
+        </div>  
+      {% endif %}
+        <form  method="post">
+          {% csrf_token %}
+          {{form}}
+          {% if invalid_bid %}
+          <p> Your bid is too low :(</p>
           {% endif %}
-        </button>
-      </form>
-        {% if user == listing.seller %}
-      <form  class = "align-self-end" method="post">
-        {% csrf_token %}
-        <input type="submit" class = "btn btn-danger ms-auto" value="Close Auction" name="close-auction">
-      </form>
-        {% endif %}
+          <input class= "btn btn-primary"type="submit" name="place-bid">
+        </form>
+        <form  class = "align-self-end" method="post">
+          {% csrf_token %}
+          <button class = "btn btn-light ms-auto" type="submit"  name = "watchlist">
+            {% if watched %}
+            Remove from Watchlist
+            {% else %}
+            Add to Watchlist
+            {% endif %}
+          </button>
+        </form>
+          {% if user == listing.seller %}
+        <form  class = "align-self-end" method="post">
+          {% csrf_token %}
+          <input type="submit" class = "btn btn-danger ms-auto" value="Close Auction" name="close-auction">
+        </form>
+          {% endif %}
+    </div>
   </div>
-</div>
-<div>
-  <form method="post">
-    {% csrf_token %}
-    {{comment_form}}
-    <input class= "btn btn-primary" type="submit" name="commenting">
-  </form>
-  <ul>
-  {% for comment in listing.comments %}
-    <li>{{comment}}</li>
-  {% endfor %}
-  <ul>
+
+  <div id="comments-container">
+    <form class="mt-4" method="post">
+      {% csrf_token %}
+      {% if user.is_authenticated %}
+      {{comment_form.comment}}
+      <input class= "btn btn-secondary form-control" type="submit" name="commenting">
+      {% endif %}
+    </form>
+    <ul class= "list-group ">
+    {% for comment in listing.comments %}
+      <li class="mt-2 list-group-item">
+        <p>{{comment.comment}}</p>
+        <small class:"text-muted"><em>{{comment.timestamp}}</em> by {{comment.commenter}}</small>
+      </li>
+    {% endfor %}
+    <ul>
+  </div>
 </div>
 
 
