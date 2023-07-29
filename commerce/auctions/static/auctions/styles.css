@@ -28,31 +28,20 @@ body {
   }
 
   .lstng-dtls-container {
-    grid-column: 2 / span 1;
+    grid-column: 2 / span 2;
     display:flex;
     flex-direction:column;
     justify-content: space-around;
   }
 
 /* index.html */
-.index_imgs {
-  height: 100px;
-  width: 100px;
-}
+
 
 .card {
-  flex-basis: 200px;
+  
   margin: 10px;
   /*background-color: rgba(251, 189, 112, 0.806);*/
 }
-
-#grid-container {
-  display: grid;
-  grid-template-columns: 1fr 3fr 1fr;
-}
-  #listings {
-    grid-column: 2 / span 1;
-  }
 
 #comments-container {
   grid-area: 2 / 2 / span 1 / span 1;

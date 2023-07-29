@@ -3,26 +3,25 @@
 {% load custom %}
 {% block body %}
     <h2>Active Listings</h2>
-    <div id="grid-container">
-      <ul id="listings"class="d-flex flex-column justify-content-around">
+      <ul class="">
         {% for listing in listings %}
-        <li class="card bg-light">
-          <a class = "w-100 h-100 position-absolute"  href="{% url 'listing' listing.id %}"></a>
-          {% if listing.image %}
-            <img class = "index_imgs" src="{{listing.image.url}}" alt="">
-          {% endif %}
-          <div class="card-body">
-            <h4 class="card-title">{{listing.item}}</h4>
-            <p class = "text-muted"><em>By {{listing.seller}}</em></p>
-            <p class="card-text">{{listing.description}}</p>
-            <em class="text-secondary"> created on {{listing.created}}</em>
-            <p>price: £{{listing.price|round_decimal}}</p>
-            <p>Current Bid: <em>£ {{listing.max_bid|round_decimal}}</em></p>
-            <p><em>{{listing.bids_count}} bids on this item</em></p>
-          </div>
-        </li>
+          <li class="bg-light row m-3 pt-2 position-relative">
+            <div class="col-md-3">
+              {% if listing.image %}
+                <img class="index_imgs w-100" src="{{ listing.image.url }}" alt="">
+              {% endif %}
+            </div>
+            <div class="card-body col-md-9">
+              <h4 class="card-title">{{ listing.item }}</h4>
+              <p class="text-muted"><em>By {{ listing.seller }}</em></p>
+              <p class="card-text">{{ listing.description }}</p>
+              <em class="text-secondary"> created on {{ listing.created }}</em>
+              <p>price: £{{ listing.price|round_decimal }}</p>
+              <p>Current Bid: <em>£ {{ listing.max_bid|round_decimal }}</em></p>                <p><em>{{ listing.bids_count }} bids on this item</em></p>
+            </div>
+            <a class="w-100 h-100 position-absolute" href="{% url 'listing' listing.id %}"></a>
+          </li>
         {% endfor %}
       </ul>
-    </div>
     
 {% endblock %}
